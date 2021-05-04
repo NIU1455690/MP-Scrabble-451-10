@@ -3,20 +3,22 @@
 //  Scrabble
 //
 
-
 #ifndef Cell_hpp
 #define Cell_hpp
 
-#include <stdio.h>
 #include "Tile.h"
+#include <stdio.h>
+#include <fstream>
 
-enum class ScoreEffect {
+using namespace std;
+
+typedef enum {
     DL = 0,
     TL,
     DW,
     TW,
     NO_EFFECT
-};
+} ScoreEffect;
 
 class Cell
 {
@@ -39,5 +41,6 @@ private:
     bool m_tilePlayed;
 };
 
+ifstream& operator>>(ifstream& input, ScoreEffect& s);
 
 #endif /* Cell_hpp */

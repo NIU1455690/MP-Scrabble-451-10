@@ -10,12 +10,25 @@
 
 Board::Board()
 {
-	for (int i = 0; i < BOARD_COLS_AND_ROWS; i++)
+	ifstream fichero;
+
+	fichero.open("data/Configuration/board.txt");
+
+	if (fichero.is_open())
 	{
-		for (int j = 0; j < BOARD_COLS_AND_ROWS; j++)
+		int fila, columna;
+		ScoreEffect efecto;
+
+		do
 		{
-			//	m_cells[i][j].
-		}
+			fichero >> fila >> columna;
+			fichero >> efecto;
+			
+			m_cells[fila][columna].setScoreEffect(efecto);
+
+		} while (!fichero.eof());
+
+		fichero.close();
 	}
 }
 
