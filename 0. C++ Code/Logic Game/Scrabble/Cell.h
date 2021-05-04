@@ -10,13 +10,13 @@
 #include <stdio.h>
 #include "Tile.h"
 
-typedef enum {
+enum class ScoreEffect {
     DL = 0,
     TL,
     DW,
     TW,
     NO_EFFECT
-} ScoreEffect;
+};
 
 class Cell
 {
