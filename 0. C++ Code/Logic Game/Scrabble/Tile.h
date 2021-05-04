@@ -10,7 +10,7 @@
 class Tile
 {
 public:
-    Tile();
+    Tile() { m_letter = ' '; m_score = 0; }
     Tile(char letra, unsigned int puntuacion) { m_letter = letra; m_score = puntuacion; }
     char getLetter() const { return m_letter; }
     int getScore() const { return m_score; }

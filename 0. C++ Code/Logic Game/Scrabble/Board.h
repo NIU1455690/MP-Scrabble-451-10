@@ -10,7 +10,7 @@
 #include "Scrabble.h"
 #include <stdio.h>
 #include <string>
-
+#include <vector>
 
 #include "Cell.h"
 #include "Dictionary.h"
@@ -55,18 +55,14 @@ class Board
 {
 public:
     Board();
-    ~Board();
-     
     PositionResult setTile(Tile &tile, const BoardPosition& boardPos);
     CurrentWordResult checkCurrentWord(int& points);
     void sendCurrentWordToBoard();
     void removeCurrentWord();
-    
-        
 private:
     Cell m_cells[BOARD_COLS_AND_ROWS][BOARD_COLS_AND_ROWS];
     Dictionary m_dictionary;
-    
+    vector<BoardPosition> m_currentWord;
 };
 
 #endif /* Board_hpp */

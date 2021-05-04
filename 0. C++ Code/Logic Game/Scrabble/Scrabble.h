@@ -13,7 +13,7 @@
 #include "BoardPosition.h"
 using namespace std;
 
-const int BOARD_COLS_AND_ROWS   = 15;
+const int BOARD_COLS_AND_ROWS = 15;
 
 
 typedef vector<BoardPosition> VectorOfPositions;

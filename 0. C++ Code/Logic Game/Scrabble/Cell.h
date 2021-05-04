@@ -23,6 +23,7 @@ typedef enum {
 class Cell
 {
 public:
+    Cell() { m_empty = true; m_tilePlayed = false; }
     ScoreEffect getScoreEffect() const { return m_scoreEffect; }
     Tile getTile() const { return m_tile; }
     bool getEmpty() const { return m_empty; }

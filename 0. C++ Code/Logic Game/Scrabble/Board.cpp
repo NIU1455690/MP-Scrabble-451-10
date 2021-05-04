@@ -6,7 +6,6 @@
 #include "Board.h"
 #include <algorithm>
 #include <iostream>
-#include <fstream>
 
 Board::Board()
 {
@@ -32,20 +31,32 @@ Board::Board()
 	}
 }
 
-Board::~Board()
-{
-	delete[] m_cells;
-}
-
 PositionResult Board::setTile(Tile& tile, const BoardPosition& boardPos)
 {
-	if (m_cells[boardPos.getCol()][boardPos.getRow()].getEmpty())
+	PositionResult resultado = VALID_POSITION;
+	int x = boardPos.getRow();
+	int y = boardPos.getCol();
+
+	if (m_cells[x][y].getEmpty())
 	{
-		m_cells[boardPos.getCol()][boardPos.getRow()].setTile(tile);
-		m_cells[boardPos.getCol()][boardPos.getRow()].setEmpty(false);
+		if ((0 <= x && x < BOARD_COLS_AND_ROWS) && (0 <= y && y < BOARD_COLS_AND_ROWS))
+		{
+			m_cells[x][y].setTile(tile);
+			m_cells[x][y].setEmpty(false);
+			m_cells[x][y].setTilePlayed(true);
+			m_currentWord.push_back(boardPos);
+		}
+		else
+		{
+			resultado = INVALID_POSITION;
+		}
+	}
+	else
+	{
+		resultado = NOT_EMPTY;
 	}
 
-	return PositionResult();
+	return resultado;
 }
 
 CurrentWordResult Board::checkCurrentWord(int& points)
@@ -59,4 +70,15 @@ void Board::sendCurrentWordToBoard()
 
 void Board::removeCurrentWord()
 {
+	int x, y;
+
+	for (int i = m_currentWord.size() - 1; i >= 0; i--)
+	{
+		x = m_currentWord[i].getRow();
+		y = m_currentWord[i].getCol();
+		m_cells[x][y].setEmpty(true);
+		m_cells[x][y].setTile(Tile());
+		m_cells[x][y].setTilePlayed(false);
+		m_currentWord.pop_back();
+	}
 }
