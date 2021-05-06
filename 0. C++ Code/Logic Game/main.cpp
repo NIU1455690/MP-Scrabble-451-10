@@ -34,7 +34,7 @@ using namespace std;
 void readTilesFromFile(map<char,Tile>& tiles)
 {
     ifstream lettersBagFile;
-    lettersBagFile.open ("data/Configuration/lettersBag.txt");
+    lettersBagFile.open ("../../1. Resources/data/Configuration/lettersBag.txt");
     if (lettersBagFile.is_open())
     {
         int frequency, score;
@@ -294,6 +294,7 @@ float test_3_ParaulaNoAlDiccionari(map<char,Tile>& tiles)
     cout << "Comment :=>> 7| O O O O -" <<  endl;
     cout << "Comment :=>> 8| - - - - -" <<  endl;
     cout << "Comment :=>> ----------------------------------------------------" << endl;
+    
     board.setTile(tiles['o'], BoardPosition(5,7)); //BoardPosition(col, row)
     board.setTile(tiles['o'], BoardPosition(6,7));
     board.setTile(tiles['o'], BoardPosition(7,7));

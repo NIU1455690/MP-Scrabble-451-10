@@ -28,8 +28,8 @@ public:
     Tile getTile() const { return m_tile; }
     bool getEmpty() const { return m_empty; }
     bool getTilePlayed() const { return m_tilePlayed; }
-    void setScoreEffect(ScoreEffect efectoPuntuacion) { m_scoreEffect = efectoPuntuacion; }
-    void setTile(Tile casilla) { m_tile = casilla; }
+    void setScoreEffect(ScoreEffect& efectoPuntuacion) { m_scoreEffect = efectoPuntuacion; }
+    void setTile(Tile& casilla) { m_tile = casilla; }
     void setEmpty(bool vacio) { m_empty = vacio; }
     void setTilePlayed(bool fichaJugada) { m_tilePlayed = fichaJugada; }
 private:
