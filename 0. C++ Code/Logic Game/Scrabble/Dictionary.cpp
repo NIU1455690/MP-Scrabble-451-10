@@ -56,5 +56,15 @@ void Dictionary::setLanguage(Language language)
 
 bool Dictionary::check(const string& word)
 {
-	return false;
+	bool encontrada = false;
+
+	for (int i = 0; i < m_words.size() && !encontrada; i++)
+	{
+		if (m_words[i] == word)
+		{
+			encontrada = true;
+		}
+	}
+
+	return encontrada;
 }

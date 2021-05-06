@@ -22,7 +22,7 @@ Board::Board()
 		{
 			fichero >> fila >> columna;
 			fichero >> efecto;
-			
+
 			m_cells[fila][columna].setScoreEffect(efecto);
 
 		} while (!fichero.eof());
@@ -34,6 +34,9 @@ Board::Board()
 PositionResult Board::setTile(Tile& tile, const BoardPosition& boardPos)
 {
 	PositionResult resultado = VALID_POSITION;
+
+	cout << "letraa" << tile.getLetter() << endl;
+
 	int x = boardPos.getRow();
 	int y = boardPos.getCol();
 
@@ -61,7 +64,36 @@ PositionResult Board::setTile(Tile& tile, const BoardPosition& boardPos)
 
 CurrentWordResult Board::checkCurrentWord(int& points)
 {
-	return CurrentWordResult();
+	CurrentWordResult palabraResultante = INVALID_WORD_OF_ONE_LETTER;
+	bool casillaCentral = false;
+
+	Tile t;
+	t.setLetter('t');
+
+	string palabra = "";
+
+	if (m_currentWord.size() == 1) palabraResultante = INVALID_WORD_OF_ONE_LETTER;
+	else
+	{
+		for (int i = 0; i < m_currentWord.size() - 1; i++)
+		{
+			if (m_currentWord[i].getRow() == 7 && m_currentWord[i].getCol() == 7) casillaCentral = true;
+		}
+		if (!casillaCentral) palabraResultante = INVALID_START_NOT_IN_CENTER;
+
+		//m_cells[7][7].setTile(t);
+
+		for (int i = 0; i < m_currentWord.size(); i++)
+		{
+			cout << "la letra es : " << m_cells[7][7].getTile().getLetter() << endl;
+			palabra += m_cells[m_currentWord[i].getRow()][m_currentWord[i].getCol()].getTile().getLetter();
+		}
+
+		cout << "palabra es:" << palabra << endl;
+
+	}
+
+	return palabraResultante;
 }
 
 void Board::sendCurrentWordToBoard()
