@@ -61,16 +61,19 @@ class Board
 {
 public:
     Board();
-    PositionResult setTile(Tile &tile, const BoardPosition& boardPos);
+    PositionResult setTile(Tile& tile, const BoardPosition& boardPos);
     CurrentWordResult checkCurrentWord(int& points);
     Alignment currentWordAlignment();
-    bool currentWordConsecutive(Alignment& alineacion);
+    bool currentWordConsecutive(Alignment& alineacion, int& min, int& max);
+    bool currentWordConnected(Alignment& alineacion, int min, int max, vector<BoardPosition>& conexiones);
+    void newWords(Alignment& alineacion, int min, int max, vector<BoardPosition>& conexiones);
     void sendCurrentWordToBoard();
     void removeCurrentWord();
 private:
     Cell m_cells[BOARD_COLS_AND_ROWS][BOARD_COLS_AND_ROWS];
     Dictionary m_dictionary;
     vector<BoardPosition> m_currentWord;
+    vector<vector<BoardPosition>> m_currentWords;
     bool m_emptyBoard;
 };
 

@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <fstream>
 
+using namespace std;
+
 Board::Board()
 {
 	ifstream fichero;
@@ -24,7 +26,6 @@ Board::Board()
 		{
 			fichero >> fila >> columna;
 			fichero >> efecto;
-
 			m_cells[fila][columna].setScoreEffect(efecto);
 
 		} while (!fichero.eof());
@@ -36,7 +37,7 @@ Board::Board()
 	m_dictionary.setLanguage(ENGLISH);
 }
 
-PositionResult Board::setTile(Tile& tile, const BoardPosition& boardPos)
+PositionResult Board::setTile(Tile tile, const BoardPosition& boardPos)
 {
 	PositionResult resultado = VALID_POSITION;
 
@@ -100,7 +101,8 @@ CurrentWordResult Board::checkCurrentWord(int& points)
 			}
 			else
 			{
-				bool consecutiva = currentWordConsecutive(alineacion);
+				int min, max;
+				bool consecutiva = currentWordConsecutive(alineacion, min, max);
 				if (!consecutiva)
 				{
 					palabraResultante = INVALID_NOT_ALIGNED;
@@ -119,20 +121,20 @@ CurrentWordResult Board::checkCurrentWord(int& points)
 					{
 						palabraResultante = INVALID_WORDS_NOT_IN_DICTIONARY;
 					}
+					else {
+						if (!m_emptyBoard)
+						{
+							vector<BoardPosition> conexiones;
+							bool conectada = currentWordConnected(alineacion, min, max, conexiones);
+							if (!conectada)
+							{
+								palabraResultante = INVALID_NOT_CONNECTION;
+							}
+						}
+						
+					}
 				}
 			}
-			/*
-			//m_cells[7][7].setTile(t);
-
-			for (int i = 0; i < m_currentWord.size(); i++)
-			{
-				cout << "la letra es : " << m_cells[7][7].getTile().getLetter() << endl;
-				palabra += m_cells[m_currentWord[i].getRow()][m_currentWord[i].getCol()].getTile().getLetter();
-			}
-
-			cout << "alineacion: " << alineacion;
-			cout << "palabra es:" << palabra << endl;
-			*/
 		}
 
 	}
@@ -189,9 +191,9 @@ Alignment Board::currentWordAlignment()
 	return alineacion;
 }
 
-bool Board::currentWordConsecutive(Alignment &alineacion)
+bool Board::currentWordConsecutive(Alignment &alineacion, int& min, int&max)
 {
-	int min, max, i, fila, col;
+	int i, fila, col;
 	bool consecutiva = true;
 
 	if (alineacion == HORIZONTAL)
@@ -263,6 +265,151 @@ bool Board::currentWordConsecutive(Alignment &alineacion)
 	return consecutiva;
 }
 
+bool Board::currentWordConnected(Alignment& alineacion, int min, int max, vector<BoardPosition>& conexiones)
+{
+	bool conectada = false;
+	int fila, col;
+
+	if (alineacion == HORIZONTAL)
+	{
+		fila = m_currentWord[0].getRow();
+		for (int i = min; i <= max; i++)
+		{
+			if (fila < BOARD_COLS_AND_ROWS-1) {
+
+				if (!m_cells[fila + 1][i].getEmpty())
+				{
+					BoardPosition posicion;
+					posicion.setRow(fila + 1);
+					posicion.setCol(i);
+					conexiones.push_back(posicion);
+
+					if (!conectada)
+					{
+						conectada = true;
+					}
+				}
+			}
+			
+			if (fila > 0) {
+				if (!m_cells[fila - 1][i].getEmpty())
+				{
+					BoardPosition posicion;
+					posicion.setRow(fila - 1);
+					posicion.setCol(i);
+					conexiones.push_back(posicion);
+
+					if (!conectada)
+					{
+						conectada = true;
+					}
+				}
+			}
+		}
+
+		if (max < BOARD_COLS_AND_ROWS - 1)
+		{
+			if (!m_cells[fila][max + 1].getEmpty())
+			{
+				BoardPosition posicion;
+				posicion.setRow(fila);
+				posicion.setCol(max + 1);
+				conexiones.push_back(posicion);
+
+				if (!conectada)
+				{
+					conectada = true;
+				}
+			}
+		}
+
+		if (min > 0) {
+			if (!m_cells[fila][min - 1].getEmpty())
+			{
+				BoardPosition posicion;
+				posicion.setRow(fila);
+				posicion.setCol(min - 1);
+				conexiones.push_back(posicion);
+
+				if (!conectada)
+				{
+					conectada = true;
+				}
+			}
+		}
+	}
+	else if (alineacion == VERTICAL)
+	{
+		col = m_currentWord[0].getCol();
+		for (int i = min; i <= max; i++)
+		{
+			if (col < BOARD_COLS_AND_ROWS - 1) {
+
+				if (!m_cells[i][col + 1].getEmpty())
+				{
+					BoardPosition posicion;
+					posicion.setRow(i);
+					posicion.setCol(col + 1);
+					conexiones.push_back(posicion);
+
+					if (!conectada)
+					{
+						conectada = true;
+					}
+				}
+			}
+
+			if (col > 0) {
+				if (!m_cells[i][col - 1].getEmpty())
+				{
+					BoardPosition posicion;
+					posicion.setRow(i);
+					posicion.setCol(col - 1);
+					conexiones.push_back(posicion);
+
+					if (!conectada)
+					{
+						conectada = true;
+					}
+				}
+			}
+		}
+
+		if (max < BOARD_COLS_AND_ROWS - 1)
+		{
+			if (!m_cells[max + 1][col].getEmpty())
+			{
+				BoardPosition posicion;
+				posicion.setRow(max + 1);
+				posicion.setCol(col);
+				conexiones.push_back(posicion);
+
+				if (!conectada)
+				{
+					conectada = true;
+				}
+			}
+		}
+
+		if (min > 0) {
+			if (!m_cells[min - 1][col].getEmpty())
+			{
+				BoardPosition posicion;
+				posicion.setRow(min - 1);
+				posicion.setCol(col);
+				conexiones.push_back(posicion);
+
+				if (!conectada)
+				{
+					conectada = true;
+				}
+			}
+		}
+	}
+
+	return conectada;
+}
+
 void Board::sendCurrentWordToBoard()
 {
 	int fila, col;
@@ -274,7 +421,7 @@ void Board::sendCurrentWordToBoard()
 		m_cells[fila][col].setTilePlayed(true);
 	}
 
-	removeCurrentWord();
+	m_currentWord.clear();
 
 	if (m_emptyBoard)
 	{
@@ -284,16 +431,17 @@ void Board::sendCurrentWordToBoard()
 
 void Board::removeCurrentWord()
 {
-	int x, y;
+	int fila, col;
 
-	for (int i = m_currentWord.size() - 1; i >= 0; i--)
+	for (int i = 0; i < m_currentWord.size(); i++)
 	{
 		Tile tile;
-		x = m_currentWord[i].getRow();
-		y = m_currentWord[i].getCol();
-		m_cells[x][y].setEmpty(true);
-		m_cells[x][y].setTile(tile);
-		m_cells[x][y].setTilePlayed(false);
-		m_currentWord.pop_back();
+		fila = m_currentWord[i].getRow();
+		col = m_currentWord[i].getCol();
+		m_cells[fila][col].setEmpty(true);
+		m_cells[fila][col].setTile(tile);
+		m_cells[fila][col].setTilePlayed(false);
 	}
+
+	m_currentWord.clear();
 }
