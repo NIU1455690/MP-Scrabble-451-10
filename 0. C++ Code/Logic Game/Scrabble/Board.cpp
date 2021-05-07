@@ -37,7 +37,7 @@ Board::Board()
 	m_dictionary.setLanguage(ENGLISH);
 }
 
-PositionResult Board::setTile(Tile tile, const BoardPosition& boardPos)
+PositionResult Board::setTile(Tile& tile, const BoardPosition& boardPos)
 {
 	PositionResult resultado = VALID_POSITION;
 
@@ -70,7 +70,7 @@ PositionResult Board::setTile(Tile tile, const BoardPosition& boardPos)
 CurrentWordResult Board::checkCurrentWord(int& points)
 {
 	CurrentWordResult palabraResultante = ALL_CORRECT;
-
+	points = 0;
 	string palabra = "";
 
 	if (m_currentWord.size() == 1) palabraResultante = INVALID_WORD_OF_ONE_LETTER;
@@ -130,6 +130,11 @@ CurrentWordResult Board::checkCurrentWord(int& points)
 							{
 								palabraResultante = INVALID_NOT_CONNECTION;
 							}
+							else
+							{
+								newWords(alineacion, min, max, conexiones);
+								points += pointsNewWord(alineacion, min, max);
+							}
 						}
 						
 					}
@@ -140,6 +145,224 @@ CurrentWordResult Board::checkCurrentWord(int& points)
 	}
 
 	return palabraResultante;
+}
+
+void Board::newWords(Alignment& alineacion, int min, int max, vector<BoardPosition>& conexiones)
+{
+	//=====================VERTICAL======================================================
+	if (alineacion == HORIZONTAL)
+	{
+		int fila = conexiones[0].getRow();
+
+		for (int columna = min; columna < max; columna++)
+		{
+			//comprobamos si arriba hay más filas
+			if (fila - 1 >= 0)
+			{	/*si las hay miramos si no esta vacia, si es así iremos iterando hacia arriba hasta econtrar el principio,
+				y despues hacia abajo para encontar el final*/
+				if (!m_cells[fila - 1][columna].getEmpty())
+				{
+					int newWordMin = fila - 1;
+					int newWordMax = fila - 1;
+
+					while (newWordMin - 1 > 0 && !m_cells[newWordMin - 1][columna].getEmpty())
+					{
+						newWordMin--;
+					}
+
+					for (int i = newWordMin; i < BOARD_COLS_AND_ROWS; i++)
+					{
+						if (!m_cells[i][columna].getEmpty())
+						{
+							newWordMax = i;
+						}
+					}
+
+					//añadir posiciones a m_currentWords
+					vector <BoardPosition> v;
+					BoardPosition bp;
+					for (int i = newWordMin; i < newWordMax; i++)
+					{
+						bp.setRow(i);
+						bp.setCol(columna);
+						v.push_back(bp);
+					}
+
+					m_currentWords.push_back(v);
+				}
+			}
+			else if (fila + 1 <= BOARD_COLS_AND_ROWS)
+			{
+				int newWordMin = fila;
+				int newWordMax = fila;
+
+				for (int i = newWordMin; i < BOARD_COLS_AND_ROWS; i++)
+				{
+					if (!m_cells[i][columna].getEmpty())
+					{
+						newWordMax = i;
+					}
+				}
+
+				//añadir posiciones a m_currentWords
+				vector <BoardPosition> v;
+				BoardPosition bp;
+				for (int i = newWordMin; i < newWordMax; i++)
+				{
+					bp.setRow(i);
+					bp.setCol(columna);
+					v.push_back(bp);
+				}
+
+				m_currentWords.push_back(v);
+			}
+		}
+	}
+	//=====================VERTICAL======================================================
+	else if (alineacion == VERTICAL)
+	{
+		int columna = conexiones[0].getCol();
+
+		for (int fila = min; fila < max; fila++)
+		{
+			//comprobamos si arriba hay más filas
+			if (columna - 1 >= 0)
+			{	/*si las hay miramos si no esta vacia, si es así iremos iterando hacia arriba hasta econtrar el principio,
+				y despues hacia abajo para encontar el final*/
+				if (!m_cells[fila][columna - 1].getEmpty())
+				{
+					int newWordMin = columna - 1;
+					int newWordMax = columna - 1;
+
+					while (newWordMin - 1 > 0 && !m_cells[fila][newWordMin - 1].getEmpty())
+					{
+						newWordMin--;
+					}
+
+					for (int i = newWordMin; i < BOARD_COLS_AND_ROWS; i++)
+					{
+						if (!m_cells[fila][i].getEmpty())
+						{
+							newWordMax = i;
+						}
+					}
+
+					//añadir posiciones a m_currentWords
+					vector <BoardPosition> v;
+					BoardPosition bp;
+					for (int i = newWordMin; i < newWordMax; i++)
+					{
+						bp.setRow(fila);
+						bp.setCol(i);
+						v.push_back(bp);
+					}
+
+					m_currentWords.push_back(v);
+				}
+			}
+			else if (columna + 1 <= BOARD_COLS_AND_ROWS)
+			{
+				int newWordMin = columna;
+				int newWordMax = columna;
+
+				for (int i = newWordMin; i < BOARD_COLS_AND_ROWS; i++)
+				{
+					if (!m_cells[fila][i].getEmpty())
+					{
+						newWordMax = i;
+					}
+				}
+
+				//añadir posiciones a m_currentWords
+				vector <BoardPosition> v;
+				BoardPosition bp;
+				for (int i = newWordMin; i < newWordMax; i++)
+				{
+					bp.setRow(fila);
+					bp.setCol(i);
+					v.push_back(bp);
+				}
+
+				m_currentWords.push_back(v);
+			}
+		}
+	}
+}
+
+int Board::pointsNewWord(Alignment& alineacion, int min, int max)
+{
+	int fila = 0;
+	int columna = 0;
+	int puntuacion = 0;
+	int wordPoints = 0;
+	int doblePalabra = 0;
+	int triplePalabra = 0;
+
+	if (alineacion == HORIZONTAL)
+	{
+		fila = m_currentWord[0].getRow();
+
+		for (int i = min; i < max; i++)
+		{
+			switch (m_cells[fila][i].getScoreEffect())
+			{
+			case DL:
+				puntuacion += m_cells[fila][i].getTile().getScore() * 2;
+				break;
+			case TL:
+				puntuacion += m_cells[fila][i].getTile().getScore() * 3;
+				break;
+			case DW:
+				doblePalabra = 2;;
+				break;
+			case TW:
+				triplePalabra = 3;
+				break;
+			case NO_EFFECT:
+				puntuacion += m_cells[fila][i].getTile().getScore();
+				break;
+			default:
+				break;
+			}
+		}
+
+		//no compruebo si habia doble o triple en alguna casilla porque si es 0 no afecta
+		puntuacion += puntuacion + doblePalabra;
+		puntuacion += puntuacion + triplePalabra;
+
+	}
+	else if (alineacion == VERTICAL)
+	{
+		columna = m_currentWord[0].getCol();
+
+		for (int i = min; i < max; i++)
+		{
+			switch (m_cells[i][columna].getScoreEffect())
+			{
+			case DL:
+				puntuacion += m_cells[i][columna].getTile().getScore() * 2;
+				break;
+			case TL:
+				puntuacion += m_cells[i][columna].getTile().getScore() * 3;
+				break;
+			case DW:
+				doblePalabra = 2;;
+				break;
+			case TW:
+				triplePalabra = 3;
+				break;
+			default:
+				puntuacion += m_cells[i][columna].getTile().getScore();
+				break;
+			}
+		}
+
+		//no compruebo si habia doble o triple en alguna casilla porque si es 0 no afecta
+		puntuacion += puntuacion + doblePalabra;
+		puntuacion += puntuacion + triplePalabra;
+	}
+
+	return puntuacion;
 }
 
 Alignment Board::currentWordAlignment()

@@ -66,6 +66,7 @@ public:
     Alignment currentWordAlignment();
     bool currentWordConsecutive(Alignment& alineacion, int& min, int& max);
     bool currentWordConnected(Alignment& alineacion, int min, int max, vector<BoardPosition>& conexiones);
+    int pointsNewWord(Alignment& alineacion, int min, int max);
     void newWords(Alignment& alineacion, int min, int max, vector<BoardPosition>& conexiones);
     void sendCurrentWordToBoard();
     void removeCurrentWord();
