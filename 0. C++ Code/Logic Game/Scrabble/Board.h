@@ -28,6 +28,12 @@ using namespace std;
 //   Y
 
 typedef enum {
+    HORIZONTAL = 0,
+    VERTICAL,
+    NOT_ALIGNED
+} Alignment;
+
+typedef enum {
     VALID_POSITION = 0,
     INVALID_POSITION,
     NOT_EMPTY
@@ -55,14 +61,23 @@ class Board
 {
 public:
     Board();
-    PositionResult setTile(Tile &tile, const BoardPosition& boardPos);
+    PositionResult setTile(Tile& tile, const BoardPosition& boardPos);
     CurrentWordResult checkCurrentWord(int& points);
+    Alignment currentWordAlignment();
+    string readWordFromVector(vector<BoardPosition>& vector);
+    bool currentWordConsecutive(Alignment& alineacion, int& min, int& max, bool& interseccion);
+    bool currentWordConnected(Alignment& alineacion, int min, int max, vector<BoardPosition>& conexiones, bool conectada);
+    int pointsWord(vector<BoardPosition>& word);
+    int pointsWords();
+    void newWords(Alignment& alineacion, int& min, int& max, vector<BoardPosition>& conexiones);
     void sendCurrentWordToBoard();
     void removeCurrentWord();
 private:
     Cell m_cells[BOARD_COLS_AND_ROWS][BOARD_COLS_AND_ROWS];
     Dictionary m_dictionary;
     vector<BoardPosition> m_currentWord;
+    vector<vector<BoardPosition>> m_connectedWords;
+    bool m_emptyBoard;
 };
 
 #endif /* Board_hpp */

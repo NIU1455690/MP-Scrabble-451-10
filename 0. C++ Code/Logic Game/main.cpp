@@ -34,7 +34,7 @@ using namespace std;
 void readTilesFromFile(map<char,Tile>& tiles)
 {
     ifstream lettersBagFile;
-    lettersBagFile.open ("data/Configuration/lettersBag.txt");
+    lettersBagFile.open ("../../1. Resources/data/Configuration/lettersBag.txt");
     if (lettersBagFile.is_open())
     {
         int frequency, score;
@@ -294,6 +294,7 @@ float test_3_ParaulaNoAlDiccionari(map<char,Tile>& tiles)
     cout << "Comment :=>> 7| O O O O -" <<  endl;
     cout << "Comment :=>> 8| - - - - -" <<  endl;
     cout << "Comment :=>> ----------------------------------------------------" << endl;
+    
     board.setTile(tiles['o'], BoardPosition(5,7)); //BoardPosition(col, row)
     board.setTile(tiles['o'], BoardPosition(6,7));
     board.setTile(tiles['o'], BoardPosition(7,7));
@@ -568,7 +569,8 @@ float test_5_VerificarPuntuacio(map<char,Tile>& tiles)
     cout << "Comment :=>>  |--------------------------------|" << endl;
     cout << "Comment :=>>10|  - | - |E-1| - | - | - | - | - |" << endl;
     cout << "Comment :=>>  |    |   |   | DP|   |   |   |   |" << endl;
-    cout << "Comment :=>>   -------------------------------- " << endl;   board.setTile(tiles['t'], BoardPosition(9,5)); //BoardPosition(col, row)
+    cout << "Comment :=>>   -------------------------------- " << endl;   
+    board.setTile(tiles['t'], BoardPosition(9,5)); //BoardPosition(col, row)
     board.setTile(tiles['i'], BoardPosition(9,6));
     board.setTile(tiles['c'], BoardPosition(9,7));
     board.setTile(tiles['k'], BoardPosition(9,8));
