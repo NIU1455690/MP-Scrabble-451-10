@@ -64,17 +64,19 @@ public:
     PositionResult setTile(Tile& tile, const BoardPosition& boardPos);
     CurrentWordResult checkCurrentWord(int& points);
     Alignment currentWordAlignment();
-    bool currentWordConsecutive(Alignment& alineacion, int& min, int& max);
-    bool currentWordConnected(Alignment& alineacion, int min, int max, vector<BoardPosition>& conexiones);
-    int pointsNewWord(Alignment& alineacion, int min, int max);
-    void newWords(Alignment& alineacion, int min, int max, vector<BoardPosition>& conexiones);
+    string readWordFromVector(vector<BoardPosition>& vector);
+    bool currentWordConsecutive(Alignment& alineacion, int& min, int& max, bool& interseccion);
+    bool currentWordConnected(Alignment& alineacion, int min, int max, vector<BoardPosition>& conexiones, bool conectada);
+    int pointsWord(vector<BoardPosition>& word);
+    int pointsWords();
+    void newWords(Alignment& alineacion, int& min, int& max, vector<BoardPosition>& conexiones);
     void sendCurrentWordToBoard();
     void removeCurrentWord();
 private:
     Cell m_cells[BOARD_COLS_AND_ROWS][BOARD_COLS_AND_ROWS];
     Dictionary m_dictionary;
     vector<BoardPosition> m_currentWord;
-    vector<vector<BoardPosition>> m_currentWords;
+    vector<vector<BoardPosition>> m_connectedWords;
     bool m_emptyBoard;
 };
 
